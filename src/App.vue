@@ -1,28 +1,31 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  
+  <div id="page-top" class="bg-primary" >
+       <!-- Navigation-->
+       <navbar-template></navbar-template>
+        <!-- Masthead-->
+        <router-view></router-view>
+        <!-- Footer-->
+        <footer class="bg-light py-5">
+            <div class="container px-4 px-lg-5">
+              <div class="small text-center text-muted">
+                Copyright &copy; 2023 - reno
+              </div>
+            </div>
+        </footer>
   </div>
 </template>
 
+
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import navbar from './components/layouts/navbar.vue'
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
+  name: 'page-top',
+  components : {
+    'navbar-template': navbar,
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+
