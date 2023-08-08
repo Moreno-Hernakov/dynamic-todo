@@ -1,6 +1,6 @@
 <template>
   
-  <div id="page-top" class="bg-primary" >
+  <div id="page-top" >
        <!-- Navigation-->
        <navbar-template></navbar-template>
         <!-- Masthead-->
@@ -24,7 +24,7 @@ export default {
   name: 'page-top',
   components : {
     'navbar-template': navbar,
-  }
+  },
 }
 </script>
 
