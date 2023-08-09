@@ -24,17 +24,23 @@
                         <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
 
                         <div class="form-outline mb-4">
-                          <input type="email" id="form2Example17" class="form-control form-control-lg" />
-                          <label class="form-label" for="form2Example17">Email address</label>
+                          <label class="form-label" for="email">Email address</label>
+                          <input type="email" v-model="email" id="email" :class="`form-control form-control-lg ${errEmail ? 'is-invalid' : ''} `" />
+                          <div  class="invalid-feedback">
+                            {{ errEmail }}
+                          </div>
                         </div>
 
                         <div class="form-outline mb-4">
-                          <input type="password" id="form2Example27" class="form-control form-control-lg" />
-                          <label class="form-label" for="form2Example27">Password</label>
+                          <label class="form-label" for="password">Password</label>
+                          <input type="password" v-model="password" id="password" :class="`form-control form-control-lg ${errPassword ? 'is-invalid' : ''} `" />
+                          <div  class="invalid-feedback">
+                            {{ errPassword }}
+                          </div>
                         </div>
 
                         <div class="pt-1 mb-4">
-                          <button class="btn btn-dark btn-lg btn-block" type="button">Login</button>
+                          <button @click="login()" class="btn btn-dark btn-lg btn-block" type="button">Login</button>
                         </div>
 
                         <p class="mb-5 pb-lg-2" style="color: #393f81;">
@@ -57,6 +63,56 @@
 
 <script>
 export default {
-  name: 'login-template'
+  name: 'login-template',
+  data: function(){
+    return {
+      email: '',
+      password: '',
+
+      errEmail: '',
+      errPassword: '',
+    }
+  },
+  methods: {
+    login: function(){
+      this.axios.post('http://127.0.0.1:8000/api/login', {
+          email: this.email,
+          password: this.password
+      })
+        .then((res) => {
+          localStorage.setItem("token", res.data.access_token);
+          console.log(localStorage.getItem("token"))
+          this.$swal({
+              icon: 'success',
+              text: 'Login Successfully',
+              showConfirmButton: false,
+              timer: 900,
+          })
+            .then(() => this.$router.push('/home'))
+          this.email = ''
+          this.password = ''
+        })
+        .catch(err => {
+          // console.log(err.response.data)
+          if(err.response.data.errors == undefined){
+            this.$swal({
+                icon: 'error',
+                text: err.response.data.error,
+                showConfirmButton: false,
+                timer: 1500,
+            })
+          }
+
+            err.response.data.errors.email !== undefined 
+            ? this.errEmail = err.response.data.errors.email[0] 
+            : this.errEmail = ''
+
+            err.response.data.errors.password !== undefined 
+            ? this.errPassword = err.response.data.errors.password[0] 
+            : this.errPassword = ''
+
+        })
+    }
+  }
 }
 </script>

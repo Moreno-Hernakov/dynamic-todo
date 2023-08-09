@@ -10,7 +10,14 @@
             </div> -->
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ms-auto my-2 my-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="#about">By Renoo</a></li>
+                    <li v-if="!isLogin" class="nav-item">
+                      <a class="nav-link" href="#about">By Renoo</a>
+                    </li>
+                    <li v-else class="nav-item">
+                      <button @click="logout()" class="fw-bold btn btn-sm btn-outline-dark px-3 py-2 rounded-3">
+                        Logout
+                      </button>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -21,6 +28,20 @@
 <script>
 
 export default {
-  name: 'nav-template'
+  name: 'nav-template',
+  data : function(){
+    return {
+      isLogin : ''
+    }
+  },
+  mounted() {
+    this.isLogin = localStorage.getItem("token")
+  },
+  methods: {
+    logout : function(){
+      localStorage.removeItem('token');
+      window.location.href = "/";
+    }
+  }
 }
 </script>
