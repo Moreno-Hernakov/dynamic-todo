@@ -11,8 +11,8 @@
           <div class="card p-3">
             <div class="input-group mb-3">
               <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="add todo..." aria-label="Recipient's username" aria-describedby="button-addon2">
-                <button class="btn btn-outline-success" type="button" id="button-addon2">save</button>
+                <input v-model="todo" type="text" class="form-control" placeholder="add todo..." aria-label="Recipient's username" aria-describedby="button-addon2">
+                <button @click="addTodo()" class="btn btn-outline-success" type="button" id="button-addon2">save</button>
               </div>
             </div>
             <!-- <table  class="table table-striped text-center"> -->
@@ -47,7 +47,7 @@
                   </td>
                   <td class="d-flex justify-content-around">
                     <button class="btn btn-outline-secondary btn-sm shadow mr-2">Update</button>
-                    <button class="btn btn-danger btn-sm shadow ">Delete</button>
+                    <button @click="deleteTodo(todoo._id)" class="btn btn-danger btn-sm shadow ">Delete</button>
                   </td>
                 </tr>
               </tbody>
@@ -90,6 +90,54 @@ export default {
         .catch(err => {
           console.log(err.response)
         })
+    },
+
+    addTodo : function(){
+      this.axios.post('http://127.0.0.1:8000/api/auth/add', {todo : this.todo} ,{
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("token")
+        }
+      })
+        .then((res) => {
+          console.log(res.data)
+          this.$swal({
+              icon: 'success',
+              text: res.data.message,
+              showConfirmButton: false,
+              timer: 900,
+          })
+          this.todo = ''
+          this.getAllTodo()
+        })
+        .catch(err => {
+          console.log(err.response)
+        })
+    },
+
+    deleteTodo : function(id){
+      this.$swal({
+        title: 'Do you want to delete the todo?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.axios.delete(`http://127.0.0.1:8000/api/auth/delete/${id}`,{
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            }
+          })
+            .then((res) => {
+              console.log(res.data)
+              this.$swal('Deleted!', '', 'success')
+              this.getAllTodo()
+            })
+            .catch(err => {
+              console.log(err.response)
+            })
+        } 
+      })
+      
     }
   }
   
