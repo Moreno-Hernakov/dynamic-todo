@@ -27,6 +27,9 @@ Vue.use(VueRouter)
 Vue.config.productionTip = false
 
 
+
+Vue.component('home-template', require('./components/home.vue').default);
+
 // <== define VUEX ==>
 // const store = new Vuex.Store({
 //   state: {

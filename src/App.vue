@@ -2,7 +2,7 @@
   
   <div id="page-top" >
     <!-- Navigation-->
-    <navbar-template></navbar-template>
+    <navbar-template :isLogin="isLogin"></navbar-template>
     <!-- Masthead-->
     <router-view></router-view>
     <!-- Footer-->
@@ -25,6 +25,15 @@ export default {
   components : {
     'navbar-template': navbar,
   },
+  data(){
+    return{
+      isLogin : ''
+    }
+  },
+  created(){
+    this.$forceUpdate()
+    this.isLogin = localStorage.getItem("token")
+  }
 }
 </script>
 

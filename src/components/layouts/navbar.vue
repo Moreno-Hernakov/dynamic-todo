@@ -29,14 +29,7 @@
 
 export default {
   name: 'nav-template',
-  data : function(){
-    return {
-      isLogin : ''
-    }
-  },
-  mounted() {
-    this.isLogin = localStorage.getItem("token")
-  },
+  props: ['isLogin'],
   methods: {
     logout : function(){
       localStorage.removeItem('token');

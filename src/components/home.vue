@@ -3,11 +3,11 @@
     <div class="bg-primary" style="padding-top: 72px;"></div>
     <div class="container px-4 py-5">
       <div class="row">
-        <div class="col-md-4 text-center">
+        <div class="col-md-5 text-center">
           <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp"
                         alt="login form" class="w-75" style="border-radius: 1rem 0 0 1rem;" />
         </div>
-        <div class="col-md-8">
+        <div class="col-md-7 ">
           <div class="card p-3">
             <div class="input-group mb-3">
               <div class="input-group mb-3">
@@ -28,22 +28,20 @@
                 <tr v-for="(todoo, index) in todos" :key="index" :class="todoo.isChecklist? 'bg-success bg-opacity-25' : '' ">
                   <th>
                     <div class="bg-dark bg-opacity-25 shadow rounded-3 p-1">
-                      <input v-model="todoo.isChecklist" type="checkbox" >
+                      <input @click="checklist(index)" v-model="todoo.isChecklist" type="checkbox" >
                     </div>
                   </th>
                   
-                  <td v-if="!todoo.onEdited && !todoo.isChecklist" :id="index">{{ todoo.todo }}</td>
+                  <td v-if="!todoo.isChecklist" :id="index">{{ todoo.todo }}</td>
                   <td v-else-if="todoo.isChecklist" :id="index"><del>{{ todoo.todo }}</del></td>
                   <td v-else>
                     <div class="input-group mb-3 w-50 m-auto shadow">
-                       <!-- <input :value="todoo.text" type="text" class="form-control" aria-label="Recipients username" aria-describedby="button-addon2"> -->
-                       <input v-model="editTodo" type="text" class="form-control" aria-label="Recipients username" aria-describedby="button-addon2">
-                       <div class="input-group-append">
-                         <button @click="updateTodo(index)" class="btn btn-sm btn-success" type="button" id="button-addon2">Save</button>
-                       </div>
-                     </div>
-                    <!-- <input type="text" class="form-control w-25" :value="todoo.text" >
-                    <button @click="updateTodo(index)" class="btn btn-danger btn-sm mr-2">Update</button> -->
+                      <!-- <input :value="todoo.text" type="text" class="form-control" aria-label="Recipients username" aria-describedby="button-addon2"> -->
+                      <input v-model="editTodo" type="text" class="form-control" aria-label="Recipients username" aria-describedby="button-addon2">
+                      <div class="input-group-append">
+                        <button @click="updateTodo(index)" class="btn btn-sm btn-success" type="button" id="button-addon2">Save</button>
+                      </div>
+                    </div>
                   </td>
                   <td class="d-flex justify-content-around">
                     <button class="btn btn-outline-secondary btn-sm shadow mr-2">Update</button>
@@ -53,6 +51,7 @@
               </tbody>
             </table>
             <p v-else class="text-center text-danger">Todo masih kosong, buat todo pertama mu!!</p>
+            <pagination align="center" :data="home-template" @pagination-change-page="getAllTodo"></pagination>
           </div>
         </div>
       </div>
@@ -62,8 +61,13 @@
 </template>
 
 <script>
+import pagination from 'laravel-vue-pagination'
+
 export default {
   name: 'home-template',
+  components:{
+      pagination
+  },
   created() {
     this.getAllTodo()
   },
@@ -72,11 +76,31 @@ export default {
       return {
         isUpdate: false,
         editTodo: '',
-        todo: '',
+        todo: [],
         todos: [],
       }
     },
   methods : {
+    checklist : function(i){
+      this.axios.put('http://127.0.0.1:8000/api/auth/checklist',
+        {
+          id: this.todos[i]._id,
+          isChecklist: !this.todos[i].isChecklist
+        }, 
+        {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("token")
+        }
+      })
+        .then((res) => {
+          console.log(res.data)
+          this.getAllTodo()
+        })
+        .catch(err => {
+          console.log(err.response)
+        }) 
+    },
+
     getAllTodo : function(){
       this.axios.get('http://127.0.0.1:8000/api/auth/show', {
         headers: {
@@ -84,8 +108,8 @@ export default {
         }
       })
         .then((res) => {
-          this.todos = res.data
           console.log(res.data)
+          this.todos = res.data
         })
         .catch(err => {
           console.log(err.response)
@@ -93,21 +117,24 @@ export default {
     },
 
     addTodo : function(){
+      // console.log(this.todo)
       this.axios.post('http://127.0.0.1:8000/api/auth/add', {todo : this.todo} ,{
         headers: {
             Authorization: "Bearer " + localStorage.getItem("token")
         }
       })
         .then((res) => {
-          console.log(res.data)
-          this.$swal({
-              icon: 'success',
-              text: res.data.message,
-              showConfirmButton: false,
-              timer: 900,
-          })
-          this.todo = ''
-          this.getAllTodo()
+          // console.log(res.data)
+          if(res.data.success){
+            this.$swal({
+                icon: 'success',
+                text: res.data.message,
+                showConfirmButton: false,
+                timer: 900,
+            })
+            this.todo = ''
+            this.getAllTodo()
+          }
         })
         .catch(err => {
           console.log(err.response)
@@ -128,9 +155,11 @@ export default {
             }
           })
             .then((res) => {
-              console.log(res.data)
-              this.$swal('Deleted!', '', 'success')
-              this.getAllTodo()
+              // console.log(res.data)
+              if(res.data.success){
+                this.$swal('Deleted!', '', 'success')
+                this.getAllTodo()
+              }
             })
             .catch(err => {
               console.log(err.response)

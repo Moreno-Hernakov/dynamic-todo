@@ -81,7 +81,7 @@ export default {
       })
         .then((res) => {
           localStorage.setItem("token", res.data.access_token);
-          console.log(localStorage.getItem("token"))
+          // console.log(localStorage.getItem("token"))
           this.$swal({
               icon: 'success',
               text: 'Login Successfully',
