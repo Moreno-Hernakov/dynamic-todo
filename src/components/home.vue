@@ -16,7 +16,7 @@
               </div>
             </div>
             <!-- <table  class="table table-striped text-center"> -->
-            <table v-if="todos.data.length" class="table table-striped text-center mb-4">
+            <table v-if="todos.data" class="table table-striped text-center mb-4">
               <thead>
                 <tr>
                   <th width="5%">#</th>
@@ -25,26 +25,24 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(todoo, index) in todos.data" :key="todoo._id" :class="todoo.isChecklist? 'bg-success bg-opacity-25' : '' ">
+                <tr v-for="(todoo, index) in todos.data" :key="index" :class="` ${todoo.isChecklist? 'bg-success bg-opacity-25' : ''} `">
                   <th>
                     <div class="bg-dark bg-opacity-25 shadow rounded-3 p-1">
                       <input @click="checklist(index)" v-model="todoo.isChecklist" type="checkbox" >
                     </div>
                   </th>
-                  
-                  <td v-if="!todoo.isChecklist" :id="index">{{ todoo.todo }}</td>
-                  <td v-else-if="todoo.isChecklist" :id="index"><del>{{ todoo.todo }}</del></td>
-                  <td v-else>
-                    <div class="input-group mb-3 w-50 m-auto shadow">
-                      <!-- <input :value="todoo.text" type="text" class="form-control" aria-label="Recipients username" aria-describedby="button-addon2"> -->
-                      <input v-model="editTodo" type="text" class="form-control" aria-label="Recipients username" aria-describedby="button-addon2">
+                  <td v-if="todoo.isChecklist && !todoo.onEdited" :id="index"><del>{{ todoo.todo }}</del></td>
+                  <td v-else-if="todoo.onEdited">
+                    <div class="input-group w-50 m-auto shadow">
+                      <input v-model="todoo.todo" type="text" class="form-control form-control-sm" aria-label="Recipients username" aria-describedby="button-addon2">
                       <div class="input-group-append">
-                        <button @click="updateTodo(index)" class="btn btn-sm btn-success" type="button" id="button-addon2">Save</button>
+                        <button @click="editSaved(index)" class="btn btn-sm btn-success" type="button" id="button-addon2">Save</button>
                       </div>
                     </div>
                   </td>
+                  <td v-else :id="index">{{ todoo.todo }}</td>
                   <td class="d-flex justify-content-around">
-                    <button class="btn btn-outline-secondary btn-sm shadow mr-2">Update</button>
+                    <button @click="onUpdateTodo(index)" class="btn btn-outline-secondary btn-sm shadow mr-2">Update</button>
                     <button @click="deleteTodo(todoo._id)" class="btn btn-danger btn-sm shadow ">Delete</button>
                   </td>
                 </tr>
@@ -72,18 +70,64 @@ export default {
   name: 'home-template',
   created() {
     this.getAllTodo()
-  },
+    // this.todos.data.forEach(el => {
+      //   console.log(el)
+      // });
+      
+    },
   data:
     function () {
       return {
-        isUpdate: false,
-        editTodo: '',
         todo: [],
         todos: [],
         url: 'http://127.0.0.1:8000/api/auth/show?page=1'
       }
     },
   methods : {
+    editSaved : function(index, ){
+
+      this.axios.put('http://127.0.0.1:8000/api/auth/update',
+        {
+          id: this.todos.data[index]._id,
+          todo: this.todos.data[index].todo
+        }, 
+        {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("token")
+        }
+      })
+        .then((res) => {
+          console.log(res.data)
+          this.$swal({
+            icon: 'success',
+            text: 'Todo berhasil diperbarui',
+            showConfirmButton: false,
+            timer: 900,
+          })
+          this.getAllTodo()
+          this.$set(this.todos.data[index], 'onEdited', false)
+        })
+        .catch(err => {
+          console.log(err.response)
+        }) 
+
+    },
+
+    onUpdateTodo : function(index){
+
+      // check todo isChecklist?
+      if(this.todos.data[index].isChecklist){
+        this.$swal({
+            icon: 'warning',
+            text: 'Unchecklist Todo terlebih dahulu',
+            showConfirmButton: false,
+            timer: 1500,
+        })
+        return 
+      }
+      this.$set(this.todos.data[index], 'onEdited', true)
+    },
+
     checklist : function(i){
       this.axios.put('http://127.0.0.1:8000/api/auth/checklist',
         {
@@ -95,8 +139,7 @@ export default {
             Authorization: "Bearer " + localStorage.getItem("token")
         }
       })
-        .then((res) => {
-          console.log(res.data)
+        .then(() => {
           this.getAllTodo()
         })
         .catch(err => {
@@ -125,6 +168,12 @@ export default {
       })
         .then((res) => {
           this.todos = res.data
+
+          this.todos.data.forEach((e) => {
+            this.$set(e, 'onEdited', false) 
+          })
+
+          console.log(this.todos)
         })
         .catch(err => {
           console.log(err.response)
