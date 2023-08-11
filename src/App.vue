@@ -31,7 +31,6 @@ export default {
     }
   },
   created(){
-    this.$forceUpdate()
     this.isLogin = localStorage.getItem("token")
   }
 }

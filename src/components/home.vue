@@ -16,7 +16,7 @@
               </div>
             </div>
             <!-- <table  class="table table-striped text-center"> -->
-            <table v-if="todos.length" class="table table-striped text-center">
+            <table v-if="todos.data.length" class="table table-striped text-center mb-4">
               <thead>
                 <tr>
                   <th width="5%">#</th>
@@ -25,7 +25,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(todoo, index) in todos" :key="index" :class="todoo.isChecklist? 'bg-success bg-opacity-25' : '' ">
+                <tr v-for="(todoo, index) in todos.data" :key="todoo._id" :class="todoo.isChecklist? 'bg-success bg-opacity-25' : '' ">
                   <th>
                     <div class="bg-dark bg-opacity-25 shadow rounded-3 p-1">
                       <input @click="checklist(index)" v-model="todoo.isChecklist" type="checkbox" >
@@ -51,7 +51,14 @@
               </tbody>
             </table>
             <p v-else class="text-center text-danger">Todo masih kosong, buat todo pertama mu!!</p>
-            <pagination align="center" :data="home-template" @pagination-change-page="getAllTodo"></pagination>
+            <nav aria-label="Page navigation example">
+              <ul class="pagination">
+                <li class="page-item"><a @click="paginationBtn('prev')" :class="`page-link ${!todos.prev_page_url ? 'disabled' : '' }`" >Previous</a></li>
+                <li class="page-item"><a @click="paginationBtn('next')" :class="`page-link ${!todos.next_page_url ? 'disabled' : '' }`" >Next</a></li>
+              </ul>
+              <p>Page {{ todos.current_page }} of {{ todos.last_page }}</p>
+            </nav>
+            <!-- <pagination v-model="todos" :records="500" @paginate="getAllTodo"/> -->
           </div>
         </div>
       </div>
@@ -61,13 +68,8 @@
 </template>
 
 <script>
-import pagination from 'laravel-vue-pagination'
-
 export default {
   name: 'home-template',
-  components:{
-      pagination
-  },
   created() {
     this.getAllTodo()
   },
@@ -78,14 +80,15 @@ export default {
         editTodo: '',
         todo: [],
         todos: [],
+        url: 'http://127.0.0.1:8000/api/auth/show?page=1'
       }
     },
   methods : {
     checklist : function(i){
       this.axios.put('http://127.0.0.1:8000/api/auth/checklist',
         {
-          id: this.todos[i]._id,
-          isChecklist: !this.todos[i].isChecklist
+          id: this.todos.data[i]._id,
+          isChecklist: !this.todos.data[i].isChecklist
         }, 
         {
         headers: {
@@ -101,14 +104,26 @@ export default {
         }) 
     },
 
+    paginationBtn : function(e){
+      switch(e) {
+        case'prev':
+          this.url = this.todos.prev_page_url 
+          break;
+        case 'next':
+          this.url = this.todos.next_page_url 
+          break;
+      }
+
+      this.getAllTodo()
+    },
+
     getAllTodo : function(){
-      this.axios.get('http://127.0.0.1:8000/api/auth/show', {
+      this.axios.get(this.url, {
         headers: {
             Authorization: "Bearer " + localStorage.getItem("token")
         }
       })
         .then((res) => {
-          console.log(res.data)
           this.todos = res.data
         })
         .catch(err => {
@@ -117,14 +132,12 @@ export default {
     },
 
     addTodo : function(){
-      // console.log(this.todo)
       this.axios.post('http://127.0.0.1:8000/api/auth/add', {todo : this.todo} ,{
         headers: {
             Authorization: "Bearer " + localStorage.getItem("token")
         }
       })
         .then((res) => {
-          // console.log(res.data)
           if(res.data.success){
             this.$swal({
                 icon: 'success',

@@ -8,6 +8,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+// import Pagination from 'vue-pagination-2';
 // import Vuex from 'vuex'
 
 
@@ -23,12 +24,11 @@ import register from './components/auth/register.vue'
 Vue.use(VueSweetalert2);
 Vue.use(VueAxios, axios)
 Vue.use(VueRouter)
-// Vue.use(Vuex)
+// Vue.use(pagination)
 Vue.config.productionTip = false
 
 
-
-Vue.component('home-template', require('./components/home.vue').default);
+// Vue.component('pagination', Pagination);
 
 // <== define VUEX ==>
 // const store = new Vuex.Store({
