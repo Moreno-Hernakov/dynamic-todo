@@ -7,6 +7,8 @@ import './assets/css/styles.css';
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueSweetalert2 from 'vue-sweetalert2';
+
+import 'vue-loading-overlay/dist/vue-loading.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
 // import Pagination from 'vue-pagination-2';
 // import Vuex from 'vuex'

@@ -1,5 +1,13 @@
 <template>
   <div class="home-template mb-5" >
+    <loading 
+    loader="dots"
+      :active="isLoading"
+      opacity="0.5"
+      color="#ffb04f"
+      background-color="#000000"
+    >
+    </loading>
     <div class="bg-primary" style="padding-top: 72px;"></div>
     <div class="container px-4 py-5">
       <div class="row">
@@ -70,14 +78,20 @@
 <script>
 
 // import App from '../App.vue'
+import Loading from 'vue-loading-overlay';
 
 export default {
   name: 'home-template',
   created() {
+    this.isLoading = true
     this.getAllTodo()
     },
+  components: {
+      Loading
+  },
   data() {
       return {
+        isLoading: false,
         todo: '',
         todos: [],
         url: 'http://127.0.0.1:8000/api/auth/show?page=1'
@@ -162,12 +176,26 @@ export default {
           this.todos.data.forEach((e) => {
             this.$set(e, 'onEdited', false) 
           })
+
+          this.isLoading = false
           
           // App.forceUpdate()
           console.log(this.todos)
         })
         .catch(err => {
-          console.log(err.response)
+          if(err.response.data.message == 'Unauthenticated.'){
+            this.$swal({
+              icon: 'error',
+              text: 'Session Habis, Silahkan Login',
+              showConfirmButton: false,
+              timer: 1500,
+          })
+            .then(() => {
+              localStorage.removeItem('token');
+              this.$router.push('/')
+            })
+          }
+          console.log(err.response.data.message)
         })
     },
 
