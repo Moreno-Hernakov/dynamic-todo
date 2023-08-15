@@ -11,7 +11,10 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ms-auto my-2 my-lg-0">
                     <li v-if="!isLogin" class="nav-item">
-                      <a class="nav-link" href="#about">By Renoo</a>
+                      <a class="nav-link" href="">By Renoo</a>
+                    </li>
+                    <li v-if="!isLogin" class="nav-item">
+                      <router-link class="nav-link btn btn-light px-3 text-dark rounded-5" to="/admin">admin</router-link>
                     </li>
                     <li v-else class="nav-item">
                       <button @click="logout()" class="fw-bold btn btn-sm btn-outline-dark px-3 py-2 rounded-3">
@@ -33,6 +36,7 @@ export default {
   methods: {
     logout : function(){
       localStorage.removeItem('token');
+      localStorage.removeItem('isAdmin');
       window.location.href = "/";
     }
   }

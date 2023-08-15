@@ -1,6 +1,6 @@
 <template>
   <div class="login-template">
-    <div class="bg-primary" style="padding-top: 72px;"></div>
+    <!-- <div class="bg-primary" style="padding-top: 72px;"></div> -->
       <!-- <section class="vh-100 " style="background-color: #9A616D;"> -->
       <section class="vh-100 bg-secondary bg-opacity-25">
         <div class="container py-5 h-100">

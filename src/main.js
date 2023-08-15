@@ -2,11 +2,15 @@ import Vue from 'vue'
 import App from './App.vue'
 import VueRouter from 'vue-router'
 import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap/dist/js/bootstrap.esm.js"
 import "bootstrap"
 import './assets/css/styles.css';
+import '@fortawesome/fontawesome-free/css/all.css'
+import '@fortawesome/fontawesome-free/js/all.js'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueSweetalert2 from 'vue-sweetalert2';
+
 
 import 'vue-loading-overlay/dist/vue-loading.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
@@ -16,8 +20,17 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 
 
 // <== define COMPONENTS ==>
-import landing from './components/landing.vue'
-import home from './components/home.vue'
+  // <== admin ==>
+import adminMain from './components/admin/main.vue'
+import adminTodo from './components/admin/todo.vue'
+import adminUser from './components/admin/user.vue'
+
+  // <== user ==>
+import landing from './components/user/landing.vue'
+import home from './components/user/home.vue'
+import userMain from './components/user/main.vue'
+
+  // <== Auth ==>
 import login from './components/auth/login.vue'
 import register from './components/auth/register.vue'
 
@@ -45,9 +58,52 @@ Vue.config.productionTip = false
 //   },
 // })
 
+
 // <== define ROUTES ==>
 const routes = [
-  { path: '/', component: landing, },
+  { 
+    // user
+    path: '/', 
+    component: userMain, 
+    redirect: { name: 'landing' },
+    children: [
+      {
+        path: "/",
+        name: "landing",
+        component: landing,
+      },
+      { 
+        path: '/home', 
+        component: home, 
+        beforeEnter(to, from, next){
+          if (!localStorage.getItem("token")){
+            next('/login')
+          } else {
+            next()
+            // window.location.href = "/#/home";
+          }
+        }
+      },
+    ]
+  },
+  // admin
+  { 
+    path: '/admin', 
+    redirect: { name: 'todo' },
+    component: adminMain, 
+    children: [
+      {
+        path: "/todo",
+        name: "todo",
+        component: adminTodo,
+      },
+      {
+        path: "/user",
+        name: "user",
+        component: adminUser,
+      },
+    ]
+  },
   { 
     path: '/login',
     component: login,
@@ -67,18 +123,6 @@ const routes = [
         router.back()
       } else {
         next()
-      }
-    }
-  },
-  { 
-    path: '/home', 
-    component: home, 
-    beforeEnter(to, from, next){
-      if (!localStorage.getItem("token")){
-        next('/login')
-      } else {
-        next()
-        // window.location.href = "/#/home";
       }
     }
   },

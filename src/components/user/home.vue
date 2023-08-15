@@ -3,7 +3,7 @@
     <loading 
     loader="dots"
       :active="isLoading"
-      opacity="0.5"
+      :opacity="0.5"
       color="#ffb04f"
       background-color="#000000"
     >
@@ -51,7 +51,7 @@
                     </td>
                     <td v-else :id="index">{{ todoo.todo }}</td>
                     <td class="d-flex justify-content-around">
-                      <button @click="onUpdateTodo(index)" class="btn btn-outline-secondary btn-sm shadow mr-2">Update</button>
+                      <button @click="onUpdateTodo(index)" :class="`${todoo.isChecklist ? 'disabled' : ''} btn btn-outline-secondary btn-sm shadow mr-2`">Update</button>
                       <button @click="deleteTodo(todoo._id)" class="btn btn-danger btn-sm shadow ">Delete</button>
                     </td>
                   </tr>
@@ -85,6 +85,7 @@ export default {
   created() {
     this.isLoading = true
     this.getAllTodo()
+
     },
   components: {
       Loading
@@ -126,17 +127,6 @@ export default {
     },
 
     onUpdateTodo : function(index){
-
-      // check todo isChecklist?
-      if(this.todos.data[index].isChecklist){
-        this.$swal({
-            icon: 'warning',
-            text: 'Unchecklist Todo terlebih dahulu',
-            showConfirmButton: false,
-            timer: 1500,
-        })
-        return 
-      }
       this.$set(this.todos.data[index], 'onEdited', true)
     },
 
@@ -181,6 +171,7 @@ export default {
           
           // App.forceUpdate()
           console.log(this.todos)
+
         })
         .catch(err => {
           if(err.response.data.message == 'Unauthenticated.'){

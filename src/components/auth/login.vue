@@ -1,6 +1,6 @@
 <template>
   <div class="login-template">
-    <div class="bg-primary" style="padding-top: 72px;"></div>
+    <!-- <div class="bg-primary" style="padding-top: 72px;"></div> -->
       <!-- <section class="vh-100 " style="background-color: #9A616D;"> -->
       <section class="vh-100 bg-secondary bg-opacity-25" style="background-color: #9A616D;">
         <div class="container py-5 h-100">
@@ -81,14 +81,35 @@ export default {
       })
         .then((res) => {
           localStorage.setItem("token", res.data.access_token);
-          // console.log(localStorage.getItem("token"))
+          
+          switch(res.data.user.role) {
+            case 'admin':
+              localStorage.setItem("isAdmin", true);
+              break;
+            case 'user':
+              localStorage.setItem("isAdmin", false);
+              break;
+          }
+              // console.log(res.data.user.role)
+
+          // console.log(localStorage.getItem('token'))
+          // console.log(localStorage.getItem('isAdmin'))
           this.$swal({
               icon: 'success',
               text: 'Login Successfully',
               showConfirmButton: false,
               timer: 900,
           })
-            .then(() => this.$router.push('/home'))
+            .then(() => {
+              
+              if(localStorage.getItem("isAdmin") == 'true'){
+                this.$router.push('/todo')
+                return 
+              }
+
+              this.$router.push('/home')
+
+            })
           this.email = ''
           this.password = ''
         })
