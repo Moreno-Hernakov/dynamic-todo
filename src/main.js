@@ -78,10 +78,9 @@ const routes = [
         beforeEnter(to, from, next){
           if (!localStorage.getItem("token")){
             next('/login')
-          } else {
+            return
+          } 
             next()
-            // window.location.href = "/#/home";
-          }
         }
       },
     ]
@@ -89,6 +88,13 @@ const routes = [
   // admin
   { 
     path: '/admin', 
+    beforeEnter(to, from, next){
+       if(localStorage.getItem("isAdmin") !== 'true'){
+          router.back()
+          return
+        }
+        next()
+    },
     redirect: { name: 'todo' },
     component: adminMain, 
     children: [
@@ -104,6 +110,8 @@ const routes = [
       },
     ]
   },
+
+  // auth
   { 
     path: '/login',
     component: login,

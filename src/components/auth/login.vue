@@ -89,7 +89,19 @@ export default {
             case 'user':
               localStorage.setItem("isAdmin", false);
               break;
+            default: 
+              localStorage.setItem("isAdmin", '');
+
           }
+
+          // if(localStorage.getItem("isAdmin") == 'true'){
+          //   alert(true)
+          //   return
+          // }else{
+          //   alert(false)
+          //   return
+          // }
+
               // console.log(res.data.user.role)
 
           // console.log(localStorage.getItem('token'))

@@ -130,7 +130,19 @@ export default {
     }
   },
   created(){
-    console.log(this.$route.name)
+
+    console.log(localStorage.getItem("isAdmin") )
+    
+    if(localStorage.getItem("isAdmin")){
+      if(localStorage.getItem("isAdmin") !== "true"){
+        console.log('login')
+        return
+      }
+    }
+    console.log('admin')
+
+    // console.log(localStorage.getItem("isAdmin") == "admin")
+    // console.log(this.$route.name)
     this.isLogin = localStorage.getItem("token")
   }, 
   methods : {
