@@ -35,9 +35,26 @@ export default {
   props: ['isLogin'],
   methods: {
     logout : function(){
-      localStorage.removeItem('token');
-      localStorage.removeItem('isAdmin');
-      window.location.href = "/";
+      this.$swal({
+        title: 'Do you want to Logout?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Logout',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.$swal({
+              icon: 'success',
+              text: 'Sampai jumpa!',
+              showConfirmButton: false,
+              timer: 900,
+          })
+          .then(() => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('isAdmin');
+            window.location.href = "/";
+          })
+        } 
+      })
     }
   }
 }

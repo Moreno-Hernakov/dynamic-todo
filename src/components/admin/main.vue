@@ -1,6 +1,6 @@
 <template>
   <div id="admin-main" >
-    <div class="min-height-300 bg-gradient-primary position-absolute w-100"></div>
+    <div class="min-height-300 bg-gradient-info position-absolute w-100"></div>
     <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 " id="sidenav-main">
       <div class="sidenav-header">
         <a class="navbar-brand m-0" target="_blank">
@@ -43,7 +43,7 @@
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
               <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="javascript:;">Admin</a></li>
-              <li class="breadcrumb-item text-sm text-white active" aria-current="page">{{ $route.name }}</li>
+              <li class="breadcrumb-item text-sm text-white active fw-bold" aria-current="page">{{ $route.name }}</li>
             </ol>
             <!-- <h6 class="font-weight-bolder text-white mb-0">Dashboard</h6> -->
           </nav>
@@ -88,10 +88,10 @@
       </nav>
       <!-- End Navbar -->
       <div class="container-fluid py-4">
-        <div class="card min-height-500">
+        <!-- <div class="card min-height-500"> -->
 
           <router-view></router-view>
-        </div>
+        <!-- </div> -->
       </div>
       <footer class="footer pt-3  ">
         <div class="container-fluid">
@@ -112,7 +112,7 @@
 </template>
 
 
-<style scoped   >
+<style>
   @import '../../assets/css/nucleo-icons.css';
   @import '../../assets/css/nucleo-svg.css';
   /* @import '../../assets/css/argon-dashboard.css'; */
@@ -121,7 +121,6 @@
 <style scoped src="../../assets/css/argon-dashboard.css"></style>
 
 <script>
-
 export default {
   name: 'admin-main',
   data(){
@@ -147,9 +146,26 @@ export default {
   }, 
   methods : {
     logout : function(){
-      localStorage.removeItem('token');
-      localStorage.removeItem('isAdmin');
-      window.location.href = "/";
+      this.$swal({
+        title: 'Do you want to Logout?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Logout',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.$swal({
+              icon: 'success',
+              text: 'Sampai jumpa!',
+              showConfirmButton: false,
+              timer: 900,
+          })
+          .then(() => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('isAdmin');
+            window.location.href = "/";
+          })
+        } 
+      })
     }
   }
 }
