@@ -1,13 +1,13 @@
 <template>
   <div id="admin-main" >
     <div class="min-height-300 bg-gradient-info position-absolute w-100"></div>
-    <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 " id="sidenav-main">
+    <aside style="z-index: 0" class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 " id="sidenav-main">
       <div class="sidenav-header">
         <a class="navbar-brand m-0" target="_blank">
           <span class="ms-1 font-weight-bold">Todo Web App Admin</span>
         </a>
       </div>
-      <hr class="horizontal dark mt-0">
+      <hr class="horizontal dark mt-0"> 
       <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
         <ul class="navbar-nav">
           <li class="nav-item">
@@ -130,15 +130,15 @@ export default {
   },
   created(){
 
-    console.log(localStorage.getItem("isAdmin") )
+    // console.log(localStorage.getItem("isAdmin") )
     
-    if(localStorage.getItem("isAdmin")){
-      if(localStorage.getItem("isAdmin") !== "true"){
-        console.log('login')
-        return
-      }
-    }
-    console.log('admin')
+    // if(localStorage.getItem("isAdmin")){
+    //   if(localStorage.getItem("isAdmin") !== "true"){
+    //     console.log('login')
+    //     return
+    //   }
+    // }
+    // console.log('admin')
 
     // console.log(localStorage.getItem("isAdmin") == "admin")
     // console.log(this.$route.name)

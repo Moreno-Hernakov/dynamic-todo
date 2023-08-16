@@ -1,11 +1,19 @@
 <template>
-  <div id="todo-page" class="container min-height-500">
+  <div id="todo-page" class="container py-5">
+    <loading style="z-index: 2;"
+    loader="dots"
+      :active="isLoading"
+      :opacity="0.5"
+      color="#0dcaf0"
+      background-color="#000000"
+    >
+    </loading>
     <div class="card mb-4 rounded-4 shadow ">
       <div class="p-4">
         <h3>Todo Table</h3>
       </div>
-      <div class="card-body px-0 pt-0 pb-2">
-        <div class="table-responsive p-0">
+      <div class="card-body p-0">
+        <div class="table-responsive">
           <table class="table table-hover container text-center">
             <thead class="bg-dark" >
               <tr >
@@ -43,15 +51,22 @@
 
 
 <script>
+import loading from 'vue-loading-overlay';
+
 export default {
   name: 'todo-page',
   data(){
     return {
       todos: [],
+      isLoading : false,
       url: 'http://127.0.0.1:8000/api/auth/showall'
     }
   },
+  components: {
+      loading
+  },
   created(){
+    this.isLoading = true
     this.getAllTodo()
   },
   methods: {
@@ -67,6 +82,7 @@ export default {
         }
       })
         .then((res) => {
+          this.isLoading = false
           this.todos = res.data
           // this.isLoading = false
           
