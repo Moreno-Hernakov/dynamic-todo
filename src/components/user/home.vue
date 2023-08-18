@@ -113,12 +113,7 @@ export default {
       })
         .then((res) => {
           console.log(res.data)
-          this.$swal({
-            icon: 'success',
-            text: 'Todo berhasil diperbarui',
-            showConfirmButton: false,
-            timer: 900,
-          })
+          this.$alert.noConfirmBtn(this, 'success', 'Todo berhasil diperbarui')
           this.getAllTodo()
           this.$set(this.todos.data[index], 'onEdited', false)
         })
@@ -192,12 +187,7 @@ export default {
 
     addTodo : function(){
       if(this.todo === ''){
-        this.$swal({
-          icon: 'warning',
-          text: 'todo tidak boleh kosong',
-          showConfirmButton: false,
-          timer: 900,
-        })
+        this.$alert.noConfirmBtn(this,'warning', 'todo tidak boleh kosong')
         return
       }
 
@@ -208,12 +198,7 @@ export default {
       })
         .then((res) => {
           if(res.data.success){
-            this.$swal({
-                icon: 'success',
-                text: res.data.message,
-                showConfirmButton: false,
-                timer: 900,
-            })
+            this.$alert.noConfirmBtn(this,'success', res.data.message)
             this.todo = ''
             this.getAllTodo()
           }
@@ -239,7 +224,8 @@ export default {
             .then((res) => {
               // console.log(res.data)
               if(res.data.success){
-                this.$swal('Deleted!', '', 'success')
+                this.$alert.noConfirmBtn(this,'success', 'Deleted!')
+                // this.$swal('Deleted!', '', 'success')
                 this.getAllTodo()
               }
             })

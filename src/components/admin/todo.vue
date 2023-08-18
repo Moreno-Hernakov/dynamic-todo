@@ -66,6 +66,7 @@ export default {
       loading
   },
   created(){
+    // console.log(this.$alert.noConfirmBtn('datanya bangg'))
     this.isLoading = true
     this.getAllTodo()
   },
@@ -91,12 +92,7 @@ export default {
         })
         .catch(err => {
           if(err.response.data.message == 'Unauthenticated.'){
-            this.$swal({
-              icon: 'error',
-              text: 'Session Habis, Silahkan Login',
-              showConfirmButton: false,
-              timer: 1500,
-          })
+            this.$alert.noConfirmBtn(this, 'error','Session Habis, Silahkan Login', 1500)
             .then(() => {
               localStorage.removeItem('token');
               this.$router.push('/')

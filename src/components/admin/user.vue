@@ -84,7 +84,7 @@ export default {
         headers: {
             Authorization: "Bearer " + localStorage.getItem("token")
         }
-      })
+      })  
         .then((res) => {
           this.isLoading = false
           this.users = res.data

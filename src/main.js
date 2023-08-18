@@ -11,6 +11,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueSweetalert2 from 'vue-sweetalert2';
 import router from'./router/index.js';
+import {alert} from './components/sweetalert2/index.js'
 
 
 import 'vue-loading-overlay/dist/vue-loading.css';
@@ -24,6 +25,7 @@ Vue.use(VueSweetalert2);
 Vue.use(VueAxios, axios)
 Vue.use(VueRouter)
 // Vue.use(pagination)
+Vue.alert = Vue.prototype.$alert = alert
 Vue.config.productionTip = false
 
 
