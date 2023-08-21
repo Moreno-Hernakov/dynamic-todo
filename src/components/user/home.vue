@@ -11,7 +11,7 @@
     <div class="bg-primary" style="padding-top: 72px;"></div>
     <div class="container px-4 py-5">
       <div class="row">
-        <div class="col-md-5 text-center">
+        <div class="col-md-5 text-center mb-3 d-none d-md-block">
           <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp"
                         alt="login form" class="w-75" style="border-radius: 1rem 0 0 1rem;" />
         </div>
@@ -170,14 +170,10 @@ export default {
         })
         .catch(err => {
           if(err.response.data.message == 'Unauthenticated.'){
-            this.$swal({
-              icon: 'error',
-              text: 'Session Habis, Silahkan Login',
-              showConfirmButton: false,
-              timer: 1500,
-          })
+          this.$alert.noConfirmBtn(this,'error', 'Session Habis, Silahkan Login!', 1500)
             .then(() => {
               localStorage.removeItem('token');
+              localStorage.removeItem('isAdmin');
               this.$router.push('/')
             })
           }

@@ -19,7 +19,7 @@
               <tr >
                 <!-- <th class="text-white" width="10%" scope="col">#</th> -->
                 <!-- <th class="text-white" width="" scope="col">id</th> -->
-                <th class="text-white" width="" scope="col">Name</th>
+                <th class="text-white" width="" scope="col">Username</th>
                 <th class="text-white" width="" scope="col">Email</th>
                 <th class="text-white" width="" scope="col">Role</th>
                 <th class="text-white" width="" scope="col">Action</th>
@@ -32,9 +32,13 @@
                 <!-- <td>3786474632874</td> -->
                 <td>{{ user.name }}</td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.role }}</td>
                 <td>
-                  <button @click="deleteTodo" class="btn btn-sm bg-danger text-white rounded-4 shadow">
+                  <button :class="`${user.role == 'admin' ? 'bg-info text-white fw-bold' : ''} btn btn-sm px-4  rounded-4 shadow`">
+                    {{ user.role }}
+                  </button>
+                </td>
+                <td>
+                  <button @click="deleteTodo(user._id)" :class="`${user.role == 'admin' ? 'disabled' : ''} btn btn-sm bg-danger text-white rounded-4 shadow`">
                     <i class="fa fa-trash"></i>&nbsp; Delete
                   </button>
                 </td>
@@ -90,17 +94,13 @@ export default {
           this.users = res.data
           // this.isLoading = false
           
-          console.log(this.users)
+          // console.log(this.users)
 
         })
         .catch(err => {
           if(err.response.data.message == 'Unauthenticated.'){
-            this.$swal({
-              icon: 'error',
-              text: 'Session Habis, Silahkan Login',
-              showConfirmButton: false,
-              timer: 1500,
-          })
+
+            this.$alert.noConfirmBtn(this, 'error', 'Session Habis, Silahkan Login!')     
             .then(() => {
               localStorage.removeItem('token');
               this.$router.push('/')
@@ -111,8 +111,32 @@ export default {
         })
     },
 
-    deleteTodo : function(){
-      alert(1)
+    deleteTodo : function(id){
+      this.$swal({
+        title: 'Do you want to delete the user?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.axios.delete(`http://127.0.0.1:8000/api/auth/deleteuser/${id}`,{
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            }
+          })
+            .then((res) => {
+
+              if(res.data.success){
+                this.$alert.noConfirmBtn(this,'success', res.data.message)
+                this.getAllUsers()
+              }
+
+            })
+            .catch(err => {
+              console.log(err.response)
+            })
+        } 
+      })
     }
   }
 }

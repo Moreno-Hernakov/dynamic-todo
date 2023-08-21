@@ -9,12 +9,9 @@
               <button class="btn btn-primary ms-auto fw-bold">Login</button>
             </div> -->
             <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                <ul class="navbar-nav ms-auto my-2 my-lg-0 mt-5">
                     <li v-if="!isLogin" class="nav-item">
                       <a class="nav-link" href="">By Renoo</a>
-                    </li>
-                    <li v-if="!isLogin" class="nav-item">
-                      <router-link class="nav-link btn btn-light px-3 text-dark rounded-5" to="/admin">admin</router-link>
                     </li>
                     <li v-else class="nav-item">
                       <button @click="logout()" class="fw-bold btn btn-sm btn-outline-dark px-3 py-2 rounded-3">
@@ -42,12 +39,8 @@ export default {
         confirmButtonText: 'Logout',
       }).then((result) => {
         if (result.isConfirmed) {
-          this.$swal({
-              icon: 'success',
-              text: 'Sampai jumpa!',
-              showConfirmButton: false,
-              timer: 900,
-          })
+
+          this.$alert.noConfirmBtn(this,'success', 'Sampai jumpa!')
           .then(() => {
             localStorage.removeItem('token');
             localStorage.removeItem('isAdmin');

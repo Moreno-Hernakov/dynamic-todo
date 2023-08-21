@@ -1,5 +1,13 @@
 <template>
   <div class="login-template">
+    <loading 
+    loader="dots"
+      :active="isLoading"
+      :opacity="0.5"
+      color="#ffb04f"
+      background-color="#000000"
+    >
+    </loading>
     <!-- <div class="bg-primary" style="padding-top: 72px;"></div> -->
       <!-- <section class="vh-100 " style="background-color: #9A616D;"> -->
       <section class="vh-100" style="background-color: #fcd9cf;">
@@ -62,10 +70,16 @@
 </template>
 
 <script>
+import Loading from 'vue-loading-overlay';
 export default {
   name: 'login-template',
+  components: {
+    Loading
+  },
   data: function(){
     return {
+      isLoading: false,
+
       email: '',
       password: '',
 
@@ -75,6 +89,7 @@ export default {
   },
   methods: {
     login: function(){
+      this.isLoading = true
       this.axios.post('http://127.0.0.1:8000/api/login', {
           email: this.email,
           password: this.password
@@ -93,25 +108,8 @@ export default {
               localStorage.setItem("isAdmin", '');
 
           }
-
-          // if(localStorage.getItem("isAdmin") == 'true'){
-          //   alert(true)
-          //   return
-          // }else{
-          //   alert(false)
-          //   return
-          // }
-
-              // console.log(res.data.user.role)
-
-          // console.log(localStorage.getItem('token'))
-          // console.log(localStorage.getItem('isAdmin'))
-          this.$swal({
-              icon: 'success',
-              text: 'Login Successfully',
-              showConfirmButton: false,
-              timer: 900,
-          })
+          this.isLoading = false
+          this.$alert.noConfirmBtn(this,'success', 'Login Successfully!')
             .then(() => {
               
               if(localStorage.getItem("isAdmin") == 'true'){
@@ -126,24 +124,24 @@ export default {
           this.password = ''
         })
         .catch(err => {
-          // console.log(err.response.data)
-          if(err.response.data.errors == undefined){
-            this.$swal({
-                icon: 'error',
-                text: err.response.data.error,
-                showConfirmButton: false,
-                timer: 1500,
-            })
+          this.isLoading = false
+          let resErr = err.response.data
+
+          if('errors' in resErr){
+
+              'email' in resErr.errors
+              ? this.errEmail = resErr.errors.email[0] 
+              : this.errEmail = ''
+  
+              'password' in resErr.errors
+              ? this.errPassword = resErr.errors.password[0] 
+              : this.errPassword = ''
+
+            return
           }
-
-            err.response.data.errors.email !== undefined 
-            ? this.errEmail = err.response.data.errors.email[0] 
-            : this.errEmail = ''
-
-            err.response.data.errors.password !== undefined 
-            ? this.errPassword = err.response.data.errors.password[0] 
-            : this.errPassword = ''
-
+          
+          this.$alert.noConfirmBtn(this,'error', resErr.error)
+          
         })
     }
   }

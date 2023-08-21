@@ -47,7 +47,7 @@ const routes = [
       path: '/admin', 
       beforeEnter(to, from, next){
          if(localStorage.getItem("isAdmin") !== 'true'){
-            router.back()
+          next('/login')
             return
           }
           next()

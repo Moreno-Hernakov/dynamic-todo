@@ -18,7 +18,7 @@
             <thead class="bg-dark" >
               <tr >
                 <!-- <th class="text-white" width="10%" scope="col">#</th> -->
-                <th class="text-white" width="40%" scope="col">User_id</th>
+                <th class="text-white" width="40%" scope="col">User Id</th>
                 <th class="text-white" width="" scope="col">Todo</th>
                 <th class="text-white" width="" scope="col">Action</th>
               </tr>
@@ -29,7 +29,7 @@
                 <td>{{ todo.user_id }}</td>
                 <td>{{ todo.todo }}</td>
                 <td>
-                  <button @click="deleteTodo" class="btn btn-sm bg-danger text-white rounded-4 shadow">
+                  <button @click="deleteTodo(todo._id)" class="btn btn-sm bg-danger text-white rounded-4 shadow">
                     <i class="fa fa-trash"></i>&nbsp; Delete
                   </button>
                 </td>
@@ -102,7 +102,7 @@ export default {
         })
     },
 
-    deleteTodo : function(){
+    deleteTodo : function(id){
       this.$swal({
         title: 'Do you want to delete the todo?',
         icon: 'warning',
@@ -110,7 +110,21 @@ export default {
         confirmButtonText: 'Delete',
       }).then((result) => {
         if (result.isConfirmed) {
-                this.$swal('Deleted!', '', 'success')
+          this.axios.delete(`http://127.0.0.1:8000/api/auth/delete/${id}`,{
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            }
+          })
+            .then((res) => {
+
+              if(res.data.success){
+                this.$alert.noConfirmBtn(this,'success', 'Deleted!')
+                this.getAllTodo()
+              }
+            })
+            .catch(err => {
+              console.log(err.response)
+            })
         } 
       })
     }
