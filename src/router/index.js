@@ -1,6 +1,5 @@
 import VueRouter from 'vue-router'
-// import Vue from 'vue'
-// <== define COMPONENTS ==>
+
 // <== admin ==>
 import adminMain from '../components/admin/main.vue'
 import adminTodo from '../components/admin/todo.vue'
