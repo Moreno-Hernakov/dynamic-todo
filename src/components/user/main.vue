@@ -3,8 +3,10 @@
   <div id="page-top" >
     <!-- Navigation-->
     <navbar-template :isLogin="isLogin"></navbar-template>
+    
     <!-- Masthead-->
     <router-view></router-view>
+    
     <!-- Footer-->
     <footer class="bg-light py-5">
       <div class="container px-4 px-lg-5">

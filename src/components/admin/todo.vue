@@ -103,12 +103,8 @@ export default {
     },
 
     deleteTodo : function(id){
-      this.$swal({
-        title: 'Do you want to delete the todo?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Delete',
-      }).then((result) => {
+      this.$alert.confirmBtn(this, 'Do you want to delete the todo?', 'Delete')
+      .then((result) => {
         if (result.isConfirmed) {
           this.axios.delete(`http://127.0.0.1:8000/api/auth/delete/${id}`,{
             headers: {

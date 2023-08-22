@@ -18,41 +18,42 @@
         <div class="col-md-7 ">
           <div class="card h-100">
             <div class="card-header">
-              <div class="input-group ">
-                <input v-model="todo" type="text" class="form-control" placeholder="add todo..." aria-label="Recipient's username" aria-describedby="button-addon2">
-                <button @click="addTodo()" class="btn btn-outline-success" type="button" id="button-addon2">save</button>
+              <div class="input-group d-flex">
+                <input v-if="show" v-model="todo" type="text" class="animate__animated animate__fadeInRight form-control" placeholder="add todo..." aria-label="Recipient's username" aria-describedby="button-addon2">
+                <button v-if="!show" @click="show = !show" class="btn btn-primary ms-auto animate__animated animate__fadeInLeft" type="button" id="button-addon2">Tambah</button>
+                <button v-else @click="addTodo()" class="btn btn-outline-success ms-auto animate__animated animate__fadeInRight" type="button" id="button-addon2">save</button>
               </div>
             </div>
             <!-- <table  class="table table-striped text-center"> -->
             <div class="card-body">
-              <table v-if="todos.data" class="table table-striped text-center mb-4">
+              <table v-if="todos.data" class="table table-hover text-center mb-4">
                 <thead>
                   <tr>
                     <th width="5%">#</th>
-                    <th width="45%">Todo</th>
-                    <th width="8%">Action</th>
+                    <th width="40%">Todo</th>
+                    <th width="5%">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(todoo, index) in todos.data" :key="index" :class="` ${todoo.isChecklist? 'bg-success bg-opacity-25' : ''} `">
+                  <tr v-for="(todoo, index) in todos.data" :key="index" :class="` ${todoo.isChecklist? 'bg-success bg-opacity-25' : ''} animate__animated animate__lightSpeedInRight`" :style="`animation-duration: 0.${index + 4}s`">
                     <th>
-                      <div class="bg-dark bg-opacity-25 shadow rounded-3 p-1">
-                        <input @click="checklist(index)" v-model="todoo.isChecklist" type="checkbox" >
-                      </div>
+                      <!-- <div class=" shadow rounded-3 p-1"> -->
+                        <input @click="checklist(index)" v-model="todoo.isChecklist" class="mt-2" type="checkbox" style="transform: scale(1.6); accent-color: #007714">
+                      <!-- </div> -->
                     </th>
                     <td v-if="todoo.isChecklist && !todoo.onEdited" :id="index"><del>{{ todoo.todo }}</del></td>
                     <td v-else-if="todoo.onEdited">
                       <div class="input-group w-50 m-auto shadow">
-                        <input v-model="todoo.todo" type="text" class="form-control form-control-sm" aria-label="Recipients username" aria-describedby="button-addon2">
+                        <input v-model="todoo.todo" type="text" :key="todoo.isNullUpdate" :class="`form-control form-control-sm animate__animated ${!todoo.isNullUpdate? 'animate__fadeInRight' : 'animate__tada border-danger'}`" aria-label="Recipients username" aria-describedby="button-addon2">
                         <div class="input-group-append">
-                          <button @click="editSaved(index)" class="btn btn-sm btn-success" type="button" id="button-addon2">Save</button>
+                          <button @click="editSaved(index)" class="btn btn-sm btn-success animate__animated animate__fadeInRight" type="button" id="button-addon2">Save</button>
                         </div>
                       </div>
                     </td>
                     <td v-else :id="index">{{ todoo.todo }}</td>
                     <td class="d-flex justify-content-around">
-                      <button @click="onUpdateTodo(index)" :class="`${todoo.isChecklist ? 'disabled' : ''} btn btn-outline-secondary btn-sm shadow mr-2`">Update</button>
-                      <button @click="deleteTodo(todoo._id)" class="btn btn-danger btn-sm shadow ">Delete</button>
+                      <button @click="onUpdateTodo(index)" :class="`${todoo.isChecklist ? 'disabled' : ''} btn btn-outline-secondary btn-sm shadow mr-2`"><i class="fa fa-pen"></i> </button>
+                      <button @click="deleteTodo(todoo._id)" class="btn btn-danger btn-sm shadow "><i class="fa fa-trash"></i></button>
                     </td>
                   </tr>
                 </tbody>
@@ -91,7 +92,9 @@ export default {
       Loading
   },
   data() {
-      return {
+    return {
+        transisition : 1,
+        show: false,
         isLoading: false,
         todo: '',
         todos: [],
@@ -99,7 +102,35 @@ export default {
       }
     },
   methods : {
-    editSaved : function(index, ){
+    addTodo : function(){
+      if(this.todo.trim() === ''){
+        this.show = !this.show
+        return
+      }
+
+      this.axios.post('http://127.0.0.1:8000/api/auth/add', {todo : this.todo} ,{
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("token")
+        }
+      })
+        .then((res) => {
+          if(res.data.success){
+            this.$alert.noConfirmBtn(this,'success', res.data.message)
+            this.todo = ''
+            this.getAllTodo()
+            this.show = !this.show
+          }
+        })
+        .catch(err => {
+          console.log(err.response)
+        })
+    },
+
+    editSaved : function(index ){
+      if(this.todos.data[index].todo.trim() === ''){
+        this.todos.data[index].isNullUpdate++
+        return
+      }
 
       this.axios.put('http://127.0.0.1:8000/api/auth/update',
         {
@@ -113,9 +144,11 @@ export default {
       })
         .then((res) => {
           console.log(res.data)
+          this.isNullUpdate = 0
           this.$alert.noConfirmBtn(this, 'success', 'Todo berhasil diperbarui')
           this.getAllTodo()
           this.$set(this.todos.data[index], 'onEdited', false)
+          this.$set(this.todos.data[index], 'isNullUpdate', 0)
         })
         .catch(err => console.error(err.response)) 
 
@@ -160,6 +193,7 @@ export default {
           
           this.todos.data.forEach((e) => {
             this.$set(e, 'onEdited', false) 
+            this.$set(e, 'isNullUpdate', 0) 
           })
 
           this.isLoading = false
@@ -181,36 +215,9 @@ export default {
         })
     },
 
-    addTodo : function(){
-      if(this.todo === ''){
-        this.$alert.noConfirmBtn(this,'warning', 'todo tidak boleh kosong')
-        return
-      }
-
-      this.axios.post('http://127.0.0.1:8000/api/auth/add', {todo : this.todo} ,{
-        headers: {
-            Authorization: "Bearer " + localStorage.getItem("token")
-        }
-      })
-        .then((res) => {
-          if(res.data.success){
-            this.$alert.noConfirmBtn(this,'success', res.data.message)
-            this.todo = ''
-            this.getAllTodo()
-          }
-        })
-        .catch(err => {
-          console.log(err.response)
-        })
-    },
-
     deleteTodo : function(id){
-      this.$swal({
-        title: 'Do you want to delete the todo?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Delete',
-      }).then((result) => {
+      this.$alert.confirmBtn(this, 'Do you want to delete the todo?', 'Delete')
+      .then((result) => {
         if (result.isConfirmed) {
           this.axios.delete(`http://127.0.0.1:8000/api/auth/delete/${id}`,{
             headers: {

@@ -21,6 +21,6 @@
 
 <script>
 export default {
-  name: 'landing-template'
+  name: 'landing-template',
 }
 </script>

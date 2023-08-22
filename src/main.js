@@ -6,6 +6,7 @@ import VueAxios from 'vue-axios'
 import VueSweetalert2 from 'vue-sweetalert2';
 import router from'./router/index.js';
 import {alert} from './components/sweetalert2/index.js'
+import 'animate.css';
 
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap.esm.js"
