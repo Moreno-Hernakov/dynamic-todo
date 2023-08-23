@@ -2,7 +2,7 @@
   
   <div id="page-top" >
     <!-- Navigation-->
-    <navbar-template :isLogin="isLogin"></navbar-template>
+    <navbar-template :key="isLogin" :isLogin="isLogin"></navbar-template>
     
     <!-- Masthead-->
     <router-view></router-view>

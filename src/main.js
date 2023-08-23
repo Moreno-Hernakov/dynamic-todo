@@ -7,6 +7,7 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import router from'./router/index.js';
 import {alert} from './components/sweetalert2/index.js'
 import 'animate.css';
+import { VueTypedJs } from 'vue-typed-js'
 
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap.esm.js"
@@ -24,6 +25,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 Vue.use(VueSweetalert2);
 Vue.use(VueAxios, axios)
 Vue.use(VueRouter)
+Vue.use(VueTypedJs)
 // Vue.use(pagination)
 Vue.alert = Vue.prototype.$alert = alert
 Vue.config.productionTip = false

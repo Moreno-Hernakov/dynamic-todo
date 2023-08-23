@@ -102,6 +102,39 @@ export default {
       }
     },
   methods : {
+    getAllTodo : function(){
+      this.axios.get(this.url, {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("token")
+        }
+      })
+        .then((res) => {
+          this.todos = res.data
+          
+          this.todos.data.forEach((e) => {
+            this.$set(e, 'onEdited', false) 
+            this.$set(e, 'isNullUpdate', 0) 
+          })
+
+          this.isLoading = false
+          
+          // App.forceUpdate()
+          console.log(this.todos)
+
+        })
+        .catch(err => {
+          if(err.response.data.message == 'Unauthenticated.'){
+          this.$alert.noConfirmBtn(this,'error', 'Session Habis, Silahkan Login!', 1500)
+            .then(() => {
+              localStorage.removeItem('token');
+              localStorage.removeItem('isAdmin');
+              this.$router.push('/')
+            })
+          }
+          console.log(err.response.data.message)
+        })
+    },
+    
     addTodo : function(){
       if(this.todo.trim() === ''){
         this.show = !this.show
@@ -180,39 +213,6 @@ export default {
     paginationBtn : function(url){
       this.url = url
       this.getAllTodo()
-    },
-
-    getAllTodo : function(){
-      this.axios.get(this.url, {
-        headers: {
-            Authorization: "Bearer " + localStorage.getItem("token")
-        }
-      })
-        .then((res) => {
-          this.todos = res.data
-          
-          this.todos.data.forEach((e) => {
-            this.$set(e, 'onEdited', false) 
-            this.$set(e, 'isNullUpdate', 0) 
-          })
-
-          this.isLoading = false
-          
-          // App.forceUpdate()
-          console.log(this.todos)
-
-        })
-        .catch(err => {
-          if(err.response.data.message == 'Unauthenticated.'){
-          this.$alert.noConfirmBtn(this,'error', 'Session Habis, Silahkan Login!', 1500)
-            .then(() => {
-              localStorage.removeItem('token');
-              localStorage.removeItem('isAdmin');
-              this.$router.push('/')
-            })
-          }
-          console.log(err.response.data.message)
-        })
     },
 
     deleteTodo : function(id){
